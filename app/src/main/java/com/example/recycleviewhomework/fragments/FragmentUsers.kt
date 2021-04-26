@@ -7,11 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.android.volley.Request
+import com.android.volley.toolbox.StringRequest
 import com.example.recycleviewhomework.R
 import com.example.recycleviewhomework.adapters.ExpandableAdapter
 import com.example.recycleviewhomework.interfaces.IActivityFragmentCommunication
+import com.example.recycleviewhomework.interfaces.IExpandable
 import com.example.recycleviewhomework.models.User
+import com.example.recycleviewhomework.utils.Constants.BASE_URL
+import com.example.recycleviewhomework.utils.Constants.USERS_URL
+import com.example.recycleviewhomework.utils.Constants.USER_ID
+import com.example.recycleviewhomework.utils.Constants.USER_NAME
+import com.example.recycleviewhomework.utils.VolleySingleton
 import kotlinx.android.synthetic.main.fragment_users.*
+import org.json.JSONArray
 
 class FragmentUsers : Fragment() {
 
@@ -29,23 +38,43 @@ class FragmentUsers : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val users = ArrayList<User>()
 
-        users.add(User(1, "Adi1"))
-        users.add(User(2, "Adi2"))
-        users.add(User(3, "Adi3"))
-        users.add(User(4, "Adi4"))
-        users.add(User(5, "Adi5"))
-        users.add(User(6, "Adi6"))
-        users.add(User(7, "Adi7"))
-        users.add(User(8, "Adi8"))
-        users.add(User(9, "Adi9"))
-        users.add(User(10, "Adi10"))
-        users.add(User(11, "Adi11"))
+        val url = "$BASE_URL/$USERS_URL/"
 
-        recycler_view.adapter = ExpandableAdapter(users)
-        recycler_view.layoutManager = LinearLayoutManager(this.context)
+        val requestQ = VolleySingleton.getInstance(context!!).requestQueue
 
+        val usersRequest = StringRequest(
+            Request.Method.GET,
+            url,
+            { responseString ->
+                recycler_view.adapter =
+                    ExpandableAdapter(getUsersFromRequestResponse(JSONArray(responseString)))
+                recycler_view.layoutManager = LinearLayoutManager(this.context)
+            },
+            { volleyError ->
+                val users = ArrayList<IExpandable>()
+
+                users.add(User(1, "$volleyError"))
+
+                recycler_view.adapter = ExpandableAdapter(users)
+                recycler_view.layoutManager = LinearLayoutManager(this.context)
+            }
+        )
+
+        requestQ.add(usersRequest)
+    }
+
+    private fun getUsersFromRequestResponse(jsonArray: JSONArray): ArrayList<IExpandable> {
+        val users = ArrayList<IExpandable>()
+
+        for (i in 0 until jsonArray.length()) {
+            val jsonObject = jsonArray.getJSONObject(i)
+            val id = jsonObject.optString(USER_ID).toInt()
+            val name = jsonObject.optString(USER_NAME)
+            users.add(User(id, name))
+        }
+
+        return users
     }
 
     override fun onAttach(context: Context) {

@@ -14,8 +14,7 @@ class MainActivity : AppCompatActivity(), IActivityFragmentCommunication {
     }
 
     override fun openNextActivity() {
-//        startActivity(Intent(this, ActivityTwo::class.java))
-
+    // EMPTY
     }
 
     override fun replaceFragment(tag: String) = when (tag) {
