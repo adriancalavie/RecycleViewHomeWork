@@ -17,6 +17,7 @@ import com.example.recycleviewhomework.models.Album
 import com.example.recycleviewhomework.models.User
 import com.example.recycleviewhomework.utils.Constants
 import com.example.recycleviewhomework.utils.Constants.ALBUMS_URL
+import com.example.recycleviewhomework.utils.Constants.ALBUM_ID
 import com.example.recycleviewhomework.utils.Constants.ALBUM_TITLE
 import com.example.recycleviewhomework.utils.Constants.BASE_URL
 import com.example.recycleviewhomework.utils.Constants.USERS_URL
@@ -49,15 +50,15 @@ class FragmentAlbums(private val userId: Int) : Fragment() {
                 { response: String? ->
                     val albums = getAlbumsFromJSON(JSONArray(response))
 
-                    vanilla_recycler_view.adapter = VanillaAdapter(albums)
+                    vanilla_recycler_view.adapter = VanillaAdapter(albums, activity)
                     vanilla_recycler_view.layoutManager = LinearLayoutManager(this.context)
                 },
                 { volleyError ->
 
                     val albums = ArrayList<Album>()
-                    albums.add(Album("$volleyError"))
+                    albums.add(Album("$volleyError", -1))
 
-                    vanilla_recycler_view.adapter = VanillaAdapter(albums)
+                    vanilla_recycler_view.adapter = VanillaAdapter(albums, activity)
                     vanilla_recycler_view.layoutManager = LinearLayoutManager(this.context)
                 }
             )
@@ -72,7 +73,8 @@ class FragmentAlbums(private val userId: Int) : Fragment() {
         for (i in 0 until jsonArray.length()) {
             val jsonObject = jsonArray.getJSONObject(i)
             val name = jsonObject.optString(ALBUM_TITLE)
-            albums.add(Album(name))
+            val id = jsonObject.optString(ALBUM_ID).toInt()
+            albums.add(Album(name, id))
         }
 
         return albums

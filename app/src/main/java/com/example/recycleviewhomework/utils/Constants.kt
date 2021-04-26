@@ -14,4 +14,7 @@ object Constants {
     const val POST_BODY = "body"
 
     const val ALBUM_TITLE = "title"
+    const val ALBUM_ID ="id"
+
+    const val IMAGE_URL = "url"
 }

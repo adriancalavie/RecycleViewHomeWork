@@ -1,3 +1,3 @@
 package com.example.recycleviewhomework.models
 
-class Album(val title: String, val id: Int)
+class Photo(val url: String)

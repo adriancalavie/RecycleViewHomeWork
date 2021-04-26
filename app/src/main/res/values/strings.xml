@@ -7,4 +7,6 @@
     <string name="body">Body</string>
     <string name="title">Title</string>
     <string name="album">Album</string>
+    <string name="image_from_http_request">Image from http request</string>
+    <string name="card_image">card image</string>
 </resources>
