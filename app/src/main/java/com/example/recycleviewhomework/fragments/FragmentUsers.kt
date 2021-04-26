@@ -47,17 +47,17 @@ class FragmentUsers : Fragment() {
             Request.Method.GET,
             url,
             { responseString ->
-                recycler_view.adapter =
-                    ExpandableAdapter(getUsersFromRequestResponse(JSONArray(responseString)))
-                recycler_view.layoutManager = LinearLayoutManager(this.context)
+                expanded_recycler_view.adapter =
+                    ExpandableAdapter(getUsersFromRequestResponse(JSONArray(responseString)), this.activity)
+                expanded_recycler_view.layoutManager = LinearLayoutManager(this.context)
             },
             { volleyError ->
                 val users = ArrayList<IExpandable>()
 
                 users.add(User(1, "$volleyError"))
 
-                recycler_view.adapter = ExpandableAdapter(users)
-                recycler_view.layoutManager = LinearLayoutManager(this.context)
+                expanded_recycler_view.adapter = ExpandableAdapter(users, this.activity)
+                expanded_recycler_view.layoutManager = LinearLayoutManager(this.context)
             }
         )
 

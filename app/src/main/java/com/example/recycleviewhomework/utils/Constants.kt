@@ -12,4 +12,6 @@ object Constants {
 
     const val POST_TITLE = "title"
     const val POST_BODY = "body"
+
+    const val ALBUM_TITLE = "title"
 }

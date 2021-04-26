@@ -4,12 +4,17 @@ package com.example.recycleviewhomework.adapters
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
-import com.android.volley.toolbox.Volley
+import com.example.recycleviewhomework.MainActivity
 import com.example.recycleviewhomework.R
+import com.example.recycleviewhomework.fragments.FragmentAlbums
+import com.example.recycleviewhomework.interfaces.IActivityFragmentCommunication
 import com.example.recycleviewhomework.interfaces.IExpandable
 import com.example.recycleviewhomework.models.ExpandableType
 import com.example.recycleviewhomework.models.Post
@@ -20,17 +25,22 @@ import com.example.recycleviewhomework.utils.Constants.POST_BODY
 import com.example.recycleviewhomework.utils.Constants.POST_TITLE
 import com.example.recycleviewhomework.utils.Constants.USERS_URL
 import com.example.recycleviewhomework.utils.VolleySingleton
-import kotlinx.android.synthetic.main.rv_item.view.*
+import kotlinx.android.synthetic.main.expandable_rv_item.view.*
 import kotlinx.android.synthetic.main.rv_underitem_item.view.*
 import org.json.JSONArray
 
-class ExpandableAdapter(private var items: ArrayList<IExpandable>) :
+
+class ExpandableAdapter(
+    private var items: ArrayList<IExpandable>,
+    private val activity: IActivityFragmentCommunication?
+) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
 
     class TopViewHolder(itemView: View) :
         RecyclerView.ViewHolder(itemView) {
         var userId = -1
         private val nameView: TextView = itemView.item_text_view
+        val btnNextView: ImageButton = itemView.btn_go_next
 
         fun bind(user: User) {
             nameView.text = user.name
@@ -61,7 +71,7 @@ class ExpandableAdapter(private var items: ArrayList<IExpandable>) :
         val inflater = LayoutInflater.from(parent.context)
 
         return if (viewType == ExpandableType.TOP_ITEM.ordinal) {
-            val topItemView = inflater.inflate(R.layout.rv_item, parent, false)
+            val topItemView = inflater.inflate(R.layout.expandable_rv_item, parent, false)
             TopViewHolder(topItemView)
         } else {
             val underItemView = inflater.inflate(R.layout.rv_underitem_item, parent, false)
@@ -132,6 +142,11 @@ class ExpandableAdapter(private var items: ArrayList<IExpandable>) :
                 }
 
 
+            }
+            holder.btnNextView.setOnClickListener {
+                val myFragment: Fragment = FragmentAlbums(holder.userId)
+                (activity as MainActivity).supportFragmentManager.beginTransaction()
+                    .replace(R.id.fragment_container, myFragment).addToBackStack(null).commit()
             }
             holder.bind(user)
 
