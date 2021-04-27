@@ -7,8 +7,10 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
+import com.android.volley.toolbox.Volley
 import com.example.recycleviewhomework.R
 import com.example.recycleviewhomework.adapters.VanillaAdapter
 import com.example.recycleviewhomework.interfaces.IActivityFragmentCommunication
@@ -23,11 +25,14 @@ import com.example.recycleviewhomework.utils.Constants.BASE_URL
 import com.example.recycleviewhomework.utils.Constants.USERS_URL
 import com.example.recycleviewhomework.utils.VolleySingleton
 import kotlinx.android.synthetic.main.fragment_albums.*
+import kotlinx.android.synthetic.main.fragment_albums.view.*
 import org.json.JSONArray
 
 class FragmentAlbums(private val userId: Int) : Fragment() {
 
     private var activity: IActivityFragmentCommunication? = null
+    private var swipeRefreshLayout: SwipeRefreshLayout? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -38,11 +43,23 @@ class FragmentAlbums(private val userId: Int) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        swipeRefreshLayout = view.refresh_albums
+        swipeRefreshLayout?.setOnRefreshListener {
+            doUpdate()
+            swipeRefreshLayout!!.isRefreshing = false
+        }
+
+        doUpdate()
+    }
+
+    private fun doUpdate() {
         if (userId != -1) {
 
             val url = "$BASE_URL/$USERS_URL/$userId/$ALBUMS_URL/"
 
-            val requestQ = VolleySingleton.getInstance(context!!).requestQueue
+//            val requestQ = VolleySingleton.getInstance(context!!).requestQueue
+            val requestQ = Volley.newRequestQueue(context)
 
             val albumsRequest = StringRequest(
                 Request.Method.GET,

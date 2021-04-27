@@ -1,7 +1,6 @@
 package com.example.recycleviewhomework.fragments
 
 import android.content.Context
-import android.media.Image
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -9,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.example.recycleviewhomework.R
@@ -21,10 +21,12 @@ import com.example.recycleviewhomework.utils.Constants.IMAGE_URL
 import com.example.recycleviewhomework.utils.Constants.PHOTOS_URL
 import com.example.recycleviewhomework.utils.VolleySingleton
 import kotlinx.android.synthetic.main.fragment_images.*
+import kotlinx.android.synthetic.main.fragment_images.view.*
 import org.json.JSONArray
 
 class FragmentImages(private val userId: Int) : Fragment() {
 
+    private var swipeRefreshLayout: SwipeRefreshLayout? = null
     private var activity: IActivityFragmentCommunication? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,6 +38,17 @@ class FragmentImages(private val userId: Int) : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
+        swipeRefreshLayout = view.refresh_images
+        swipeRefreshLayout!!.setOnRefreshListener {
+            doUpdate()
+            swipeRefreshLayout!!.isRefreshing = false
+        }
+
+        doUpdate()
+    }
+
+    private fun doUpdate() {
         if (userId != -1) {
 
             val url = "$BASE_URL/$ALBUMS_URL/$userId/$PHOTOS_URL/"
@@ -46,26 +59,16 @@ class FragmentImages(private val userId: Int) : Fragment() {
                 Request.Method.GET,
                 url,
                 { response: String? ->
-//                    val albums = getAlbumsFromJSON(JSONArray(response))
-//
-//                    vanilla_recycler_view.adapter = VanillaAdapter(albums)
-//                    vanilla_recycler_view.layoutManager = LinearLayoutManager(this.context)
                     val photos = getPhotosFromJSON(JSONArray(response))
                     photogrid_recycler_view.adapter = PhotoAdapter(photos)
                     photogrid_recycler_view.layoutManager =
                         GridLayoutManager(this.context, 3, RecyclerView.VERTICAL, false)
                 },
                 { _ ->
-
-//                    val albums = ArrayList<Album>()
-//                    albums.add(Album("$volleyError"))
-//
-//                    vanilla_recycler_view.adapter = VanillaAdapter(albums)
-//                    vanilla_recycler_view.layoutManager = LinearLayoutManager(this.context)
                     val photos = ArrayList<Photo>()
                     photogrid_recycler_view.adapter = PhotoAdapter(photos)
                     photogrid_recycler_view.layoutManager =
-                        GridLayoutManager(this.context, 3 , RecyclerView.VERTICAL, false)
+                        GridLayoutManager(this.context, 3, RecyclerView.VERTICAL, false)
                 }
             )
 

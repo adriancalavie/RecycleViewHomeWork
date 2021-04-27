@@ -4,13 +4,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.ProgressBar
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.RoundedCornersTransformation
-import com.android.volley.toolbox.ImageLoader
 import com.example.recycleviewhomework.R
 import com.example.recycleviewhomework.models.Photo
-import com.example.recycleviewhomework.utils.VolleySingleton
 import kotlinx.android.synthetic.main.photo_rv_item.view.*
 
 class PhotoAdapter(private val photos: ArrayList<Photo>) :
@@ -18,11 +17,17 @@ class PhotoAdapter(private val photos: ArrayList<Photo>) :
 
     class PhotoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val photoView: ImageView = itemView.grid_photo_view
+        private val pBar: ProgressBar = itemView.progress_photo
+
+        init {
+            pBar.visibility = View.VISIBLE
+        }
 
         fun bind(photo: Photo) {
             val url = photo.url + ".png"
 
             photoView.load(url){
+                pBar.visibility = View.GONE
                 crossfade(true)
                 transformations(RoundedCornersTransformation(30f))
             }

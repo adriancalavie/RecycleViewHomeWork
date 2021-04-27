@@ -50,4 +50,5 @@ dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation("io.coil-kt:coil:1.2.0")
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.1.0"
 }

@@ -7,6 +7,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.android.volley.Request
 import com.android.volley.toolbox.StringRequest
 import com.example.recycleviewhomework.R
@@ -20,11 +21,13 @@ import com.example.recycleviewhomework.utils.Constants.USER_ID
 import com.example.recycleviewhomework.utils.Constants.USER_NAME
 import com.example.recycleviewhomework.utils.VolleySingleton
 import kotlinx.android.synthetic.main.fragment_users.*
+import kotlinx.android.synthetic.main.fragment_users.view.*
 import org.json.JSONArray
 
 class FragmentUsers : Fragment() {
 
     private var activity: IActivityFragmentCommunication? = null
+    private var swipeRefreshLayout: SwipeRefreshLayout? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,7 +41,15 @@ class FragmentUsers : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        swipeRefreshLayout = view.refresh_users
+        swipeRefreshLayout?.setOnRefreshListener {
+                doUpdate()
+            swipeRefreshLayout!!.isRefreshing = false
+        }
+        doUpdate()
+    }
 
+    private fun doUpdate(){
         val url = "$BASE_URL/$USERS_URL/"
 
         val requestQ = VolleySingleton.getInstance(context!!).requestQueue
@@ -48,7 +59,10 @@ class FragmentUsers : Fragment() {
             url,
             { responseString ->
                 expanded_recycler_view.adapter =
-                    ExpandableAdapter(getUsersFromRequestResponse(JSONArray(responseString)), this.activity)
+                    ExpandableAdapter(
+                        getUsersFromRequestResponse(JSONArray(responseString)),
+                        this.activity
+                    )
                 expanded_recycler_view.layoutManager = LinearLayoutManager(this.context)
             },
             { volleyError ->

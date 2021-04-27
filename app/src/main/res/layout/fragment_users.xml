@@ -4,13 +4,17 @@
     android:layout_height="match_parent"
     tools:context=".fragments.FragmentUsers">
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/expanded_recycler_view"
+    <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:padding="4dp"
-        tools:listitem="@layout/expandable_rv_item"
-        />
+        android:id="@+id/refresh_users">
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/expanded_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:padding="4dp"
+            tools:listitem="@layout/expandable_rv_item" />
+    </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
